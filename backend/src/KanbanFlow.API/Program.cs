@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using KanbanFlow.Application.Interfaces;
+using KanbanFlow.Infrastructure.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +57,16 @@ builder.Services.AddAuthentication(
 });
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddScoped<
+    IJwtService,
+    JwtService
+>();
+
+builder.Services.AddScoped<
+    IPasswordService,
+    PasswordService
+>();
 
 var app = builder.Build();
 

@@ -1,3 +1,5 @@
+using KanbanFlow.Domain.Enums;
+
 namespace KanbanFlow.Domain.Entities;
 
 public class User : BaseEntity
@@ -8,7 +10,9 @@ public class User : BaseEntity
 
     public string PasswordHash { get; set; } = "";
 
-    public string Role { get; set; } = "member";
+    public UserRole Role { get; set; }
+        = UserRole.Member;
 
-    public bool IsActive { get; set; } = true;
+    public bool IsActive { get; set; }
+        = true;
 }

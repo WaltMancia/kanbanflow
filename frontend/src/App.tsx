@@ -5,9 +5,14 @@ import {
   Navigate,
 } from "react-router-dom";
 
-import LoginPage from "./pages/LoginPage";
+import LoginPage
+  from "./features/auth/pages/LoginPage";
 
-import { useAuthStore } from "./store/authStore";
+import DashboardPage
+  from "./pages/DashboardPage";
+
+import { useAuthStore }
+  from "./features/auth/store/authStore";
 
 function ProtectedRoute ({
   children,
@@ -28,16 +33,6 @@ function ProtectedRoute ({
   return children;
 }
 
-function Dashboard () {
-  return (
-    <div className="min-h-screen bg-background text-white p-10">
-      <h1 className="text-5xl font-bold">
-        Dashboard
-      </h1>
-    </div>
-  );
-}
-
 export default function App () {
   return (
     <BrowserRouter>
@@ -51,7 +46,7 @@ export default function App () {
           path="/"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <DashboardPage />
             </ProtectedRoute>
           }
         />
