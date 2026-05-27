@@ -28,8 +28,7 @@ import AppLayout
 import { api }
     from "../api/client";
 
-import { DashboardStats }
-    from "../features/dashboard/types/dashboard";
+import type { DashboardStats } from "../features/dashboard/types/dashboard";
 
 const COLORS = [
     "#3b82f6",

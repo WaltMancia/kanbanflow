@@ -1,4 +1,5 @@
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
 
 using KanbanFlow.Domain.Entities;
 using KanbanFlow.Domain.Enums;
@@ -8,32 +9,57 @@ namespace KanbanFlow.Infrastructure.Data.Seed;
 
 public static class DatabaseSeeder
 {
+    private const string AdminEmail =
+        "admin@kanbanflow.com";
+
+    private const string AdminPassword =
+        "Admin123!";
+
     public static async Task SeedAsync(
         KanbanDbContext context
     )
     {
-        if (context.Users.Any())
+        var admin = await context.Users
+            .FirstOrDefaultAsync(
+                x => x.Email == AdminEmail
+            );
+
+        if (admin is null)
+        {
+            admin = new User
+            {
+                Name = "Admin User",
+
+                Email = AdminEmail,
+
+                PasswordHash =
+                    BCrypt.Net.BCrypt.HashPassword(
+                        AdminPassword
+                    ),
+
+                Role = UserRole.Admin
+            };
+
+            context.Users.Add(admin);
+        }
+        else
+        {
+            admin.Name = "Admin User";
+
+            admin.PasswordHash =
+                BCrypt.Net.BCrypt.HashPassword(
+                    AdminPassword
+                );
+
+            admin.Role = UserRole.Admin;
+        }
+
+        await context.SaveChangesAsync();
+
+        if (await context.Teams.AnyAsync())
         {
             return;
         }
-
-        var admin = new User
-        {
-            Name = "Admin User",
-
-            Email = "admin@kanbanflow.com",
-
-            PasswordHash =
-                BCrypt.Net.BCrypt.HashPassword(
-                    "Admin123!"
-                ),
-
-            Role = UserRole.Admin
-        };
-
-        context.Users.Add(admin);
-
-        await context.SaveChangesAsync();
 
         var team = new Team
         {
