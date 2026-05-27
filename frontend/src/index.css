@@ -1,1 +1,40 @@
 @import "tailwindcss";
+
+:root {
+    --background: #020617;
+    --surface: #0f172a;
+    --secondary: #111827;
+    --border: rgba(255, 255, 255, 0.08);
+
+    color-scheme: dark;
+}
+
+body {
+    background: var(--background);
+    color: white;
+
+    font-family:
+        Inter,
+        system-ui,
+        sans-serif;
+}
+
+.bg-background {
+    background:
+        var(--background);
+}
+
+.bg-surface {
+    background:
+        var(--surface);
+}
+
+.bg-secondary {
+    background:
+        var(--secondary);
+}
+
+.border-border {
+    border-color:
+        var(--border);
+}
