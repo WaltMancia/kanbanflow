@@ -10,6 +10,9 @@ import { NavLink } from "react-router-dom";
 import { useAuthStore }
     from "../store/authStore";
 
+import { KanbanSquare }
+    from "lucide-react";
+
 export default function AppLayout ({
     children,
 }: {
@@ -64,6 +67,15 @@ export default function AppLayout ({
                         }
                         label="Projects"
                     />
+
+                    <SidebarItem
+                        to="/kanban"
+                        icon={
+                            <KanbanSquare size={ 20 } />
+                        }
+                        label="Kanban"
+                    />
+
                 </nav>
 
                 {/* USER */ }

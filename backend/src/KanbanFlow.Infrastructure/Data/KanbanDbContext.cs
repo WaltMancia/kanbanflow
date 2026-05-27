@@ -21,6 +21,9 @@ public class KanbanDbContext
     public DbSet<Project> Projects
         => Set<Project>();
 
+    public DbSet<TaskItem> Tasks
+        => Set<TaskItem>();
+
     protected override void OnModelCreating(
         ModelBuilder modelBuilder
     )
@@ -43,5 +46,16 @@ public class KanbanDbContext
             .HasOne(x => x.Team)
             .WithMany(x => x.Projects)
             .HasForeignKey(x => x.TeamId);
+
+        modelBuilder.Entity<TaskItem>()
+            .HasOne(x => x.Project)
+            .WithMany()
+            .HasForeignKey(x => x.ProjectId);
+
+        modelBuilder.Entity<TaskItem>()
+            .HasOne(x => x.Assignee)
+            .WithMany()
+            .HasForeignKey(x => x.AssigneeId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

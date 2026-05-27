@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using KanbanFlow.Application.Interfaces;
 using KanbanFlow.Infrastructure.Security;
+using KanbanFlow.Infrastructure.Data.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -84,5 +85,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider
+        .GetRequiredService<KanbanDbContext>();
+
+    await DatabaseSeeder.SeedAsync(db);
+}
 
 app.Run();

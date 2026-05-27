@@ -6,13 +6,16 @@ import {
 } from "react-router-dom";
 
 import LoginPage
-  from "./features/auth/pages/LoginPage";
+  from "./pages/LoginPage";
 
 import DashboardPage
   from "./pages/DashboardPage";
 
 import { useAuthStore }
-  from "./features/auth/store/authStore";
+  from "./store/authStore";
+
+import KanbanPage
+  from "./features/kanban/pages/KanbanPage";
 
 function ProtectedRoute ({
   children,
@@ -47,6 +50,15 @@ export default function App () {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/kanban"
+          element={
+            <ProtectedRoute>
+              <KanbanPage />
             </ProtectedRoute>
           }
         />
