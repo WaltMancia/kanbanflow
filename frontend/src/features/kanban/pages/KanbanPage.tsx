@@ -23,12 +23,29 @@ import type { Task } from "../types/task";
 import { connection }
     from "../../../realtime/signalr";
 
+import TaskModal
+    from "../components/TaskModal";
+
 const columns = [
     "Todo",
     "InProgress",
     "Review",
     "Done",
 ];
+
+const columnLabels: Record<
+    string,
+    string
+> = {
+    Todo: "To Do",
+
+    InProgress:
+        "In Progress",
+
+    Review: "Review",
+
+    Done: "Done",
+};
 
 const COLORS: Record<
     string,
@@ -48,11 +65,16 @@ const COLORS: Record<
 };
 
 export default function KanbanPage () {
-    const [tasks, setTasks] =
-        useState<Task[]>([]);
+    const [tasks, setTasks]
+        = useState<Task[]>([]);
 
     const [onlineUsers, setOnlineUsers]
         = useState(1);
+
+    const [selectedTask, setSelectedTask]
+        = useState<Task | null>(
+            null
+        );
 
     async function loadTasks () {
         try {
@@ -108,6 +130,15 @@ export default function KanbanPage () {
                 );
 
                 connection.on(
+                    "CommentCreated",
+                    () => {
+                        toast.success(
+                            "New comment added"
+                        );
+                    }
+                );
+
+                connection.on(
                     "UserConnected",
                     () => {
                         setOnlineUsers(
@@ -145,6 +176,10 @@ export default function KanbanPage () {
 
             connection.off(
                 "TaskUpdated"
+            );
+
+            connection.off(
+                "CommentCreated"
             );
 
             connection.off(
@@ -330,6 +365,11 @@ export default function KanbanPage () {
                                                                     }
                                                                     { ...provided.draggableProps }
                                                                     { ...provided.dragHandleProps }
+                                                                    onClick={ () =>
+                                                                        setSelectedTask(
+                                                                            task
+                                                                        )
+                                                                    }
                                                                     className={ `
                                     group rounded-[24px] border p-5 transition-all duration-300 cursor-pointer
                                     ${snapshot.isDragging
@@ -403,6 +443,15 @@ export default function KanbanPage () {
                     </div>
                 </DragDropContext>
             </div>
+
+            {/* TASK MODAL */ }
+
+            <TaskModal
+                task={ selectedTask }
+                onClose={ () =>
+                    setSelectedTask(null)
+                }
+            />
         </AppLayout>
     );
 }
@@ -443,17 +492,3 @@ function MiniStat ({
         </div>
     );
 }
-
-const columnLabels: Record<
-    string,
-    string
-> = {
-    Todo: "To Do",
-
-    InProgress:
-        "In Progress",
-
-    Review: "Review",
-
-    Done: "Done",
-};
