@@ -17,6 +17,9 @@ import { useAuthStore }
 import KanbanPage
   from "./features/kanban/pages/KanbanPage";
 
+import { Toaster }
+  from "react-hot-toast";
+
 function ProtectedRoute ({
   children,
 }: {
@@ -39,6 +42,9 @@ function ProtectedRoute ({
 export default function App () {
   return (
     <BrowserRouter>
+      <Toaster
+        position="top-right"
+      />
       <Routes>
         <Route
           path="/login"

@@ -6,6 +6,7 @@ using System.Text;
 using KanbanFlow.Application.Interfaces;
 using KanbanFlow.Infrastructure.Security;
 using KanbanFlow.Infrastructure.Data.Seed;
+using KanbanFlow.API.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,5 +110,9 @@ using (var scope = app.Services.CreateScope())
 
     await DatabaseSeeder.SeedAsync(db);
 }
+
+app.MapHub<KanbanHub>(
+    "/hubs/kanban"
+);
 
 app.Run();

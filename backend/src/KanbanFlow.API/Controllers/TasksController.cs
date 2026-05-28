@@ -1,3 +1,5 @@
+using KanbanFlow.API.Hubs;
+
 using KanbanFlow.Application.DTOs.Tasks;
 using KanbanFlow.Domain.Entities;
 using KanbanFlow.Domain.Enums;
@@ -5,6 +7,7 @@ using KanbanFlow.Infrastructure.Data;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace KanbanFlow.API.Controllers;
@@ -17,11 +20,16 @@ public class TasksController
 {
     private readonly KanbanDbContext _context;
 
+    private readonly IHubContext<KanbanHub>
+        _hub;
+
     public TasksController(
-        KanbanDbContext context
+        KanbanDbContext context,
+        IHubContext<KanbanHub> hub
     )
     {
         _context = context;
+        _hub = hub;
     }
 
     [HttpGet]
@@ -62,6 +70,13 @@ public class TasksController
 
         await _context.SaveChangesAsync();
 
+        // ===== REALTIME EVENT =====
+
+        await _hub.Clients.All.SendAsync(
+            "TaskCreated",
+            task
+        );
+
         return Ok(task);
     }
 
@@ -91,6 +106,13 @@ public class TasksController
         task.Status = status;
 
         await _context.SaveChangesAsync();
+
+        // ===== REALTIME EVENT =====
+
+        await _hub.Clients.All.SendAsync(
+            "TaskUpdated",
+            task
+        );
 
         return Ok(task);
     }
