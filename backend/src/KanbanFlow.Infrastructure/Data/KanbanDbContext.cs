@@ -27,6 +27,9 @@ public class KanbanDbContext
     public DbSet<TaskComment> TaskComments
         => Set<TaskComment>();
 
+    public DbSet<TaskAttachment> TaskAttachments
+        => Set<TaskAttachment>();
+
     protected override void OnModelCreating(
         ModelBuilder modelBuilder
     )
@@ -69,5 +72,15 @@ public class KanbanDbContext
             .HasOne(x => x.User)
             .WithMany()
             .HasForeignKey(x => x.UserId);
+
+        modelBuilder.Entity<TaskAttachment>()
+            .HasOne(x => x.TaskItem)
+            .WithMany()
+            .HasForeignKey(x => x.TaskItemId);
+
+        modelBuilder.Entity<TaskAttachment>()
+            .HasOne(x => x.UploadedBy)
+            .WithMany()
+            .HasForeignKey(x => x.UploadedById);
     }
 }

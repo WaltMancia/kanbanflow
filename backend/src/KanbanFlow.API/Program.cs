@@ -7,6 +7,7 @@ using KanbanFlow.Application.Interfaces;
 using KanbanFlow.Infrastructure.Security;
 using KanbanFlow.Infrastructure.Data.Seed;
 using KanbanFlow.API.Hubs;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,6 +114,31 @@ using (var scope = app.Services.CreateScope())
 
 app.MapHub<KanbanHub>(
     "/hubs/kanban"
+);
+
+var uploadsPath = Path.Combine(
+    builder.Environment.ContentRootPath,
+    "Storage"
+);
+
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(
+        uploadsPath
+    );
+}
+
+app.UseStaticFiles(
+    new StaticFileOptions
+    {
+        FileProvider =
+            new PhysicalFileProvider(
+                uploadsPath
+            ),
+
+        RequestPath =
+            "/storage"
+    }
 );
 
 app.Run();
