@@ -22,6 +22,8 @@ import {
     useState,
 } from "react";
 
+import type { AxiosError } from "axios";
+
 import AppLayout
     from "../layouts/AppLayout";
 
@@ -43,13 +45,28 @@ export default function DashboardPage () {
             null
         );
 
-    async function loadStats () {
-        const response =
-            await api.get(
-                "/dashboard/stats"
-            );
+    const [error, setError] =
+        useState<string | null>(null);
 
-        setStats(response.data);
+    async function loadStats () {
+        try {
+            const response =
+                await api.get(
+                    "/dashboard/stats"
+                );
+
+            setStats(response.data);
+        } catch (err) {
+            const axiosError =
+                err as AxiosError<{
+                    message?: string;
+                }>;
+
+            setError(
+                axiosError.response?.data?.message ??
+                "Unable to load dashboard data"
+            );
+        }
     }
 
     useEffect(() => {
@@ -57,6 +74,16 @@ export default function DashboardPage () {
     }, []);
 
     if (!stats) {
+        if (error) {
+            return (
+                <AppLayout>
+                    <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-6 text-red-200">
+                        { error }
+                    </div>
+                </AppLayout>
+            );
+        }
+
         return (
             <AppLayout>
                 <div className="text-white">

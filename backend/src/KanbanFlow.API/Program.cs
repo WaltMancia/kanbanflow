@@ -75,6 +75,8 @@ builder.Services.AddAuthentication(
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddSignalR();
+
 builder.Services.AddScoped<
     IJwtService,
     JwtService
