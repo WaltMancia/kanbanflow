@@ -45,7 +45,7 @@ export default function AttachmentList ({
                 (file) => (
                     <a
                         key={ file.id }
-                        href={ `http://localhost:5000${file.filePath}` }
+                        href={ `${import.meta.env.VITE_API_ORIGIN ?? "http://localhost:5298"}${file.filePath}` }
                         target="_blank"
                         className="flex items-center gap-4 rounded-3xl border border-white/10 bg-slate-900/70 p-5 transition hover:border-blue-500/30"
                     >

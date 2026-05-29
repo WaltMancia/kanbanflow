@@ -27,7 +27,8 @@ builder.Services.AddCors(options =>
                 "http://127.0.0.1:5173"
             )
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -116,7 +117,7 @@ using (var scope = app.Services.CreateScope())
 
 app.MapHub<KanbanHub>(
     "/hubs/kanban"
-);
+).RequireCors("AllowFrontend");
 
 var uploadsPath = Path.Combine(
     builder.Environment.ContentRootPath,
