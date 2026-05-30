@@ -1,21 +1,25 @@
-export interface DashboardStats {
-  totalProjects: number;
-
-  totalTeams: number;
-
+export interface DashboardData {
   totalTasks: number;
 
   completedTasks: number;
 
+  inProgressTasks: number;
+
+  totalProjects: number;
+
+  totalUsers: number;
+
   productivity: number;
 
-  tasksPerStatus: {
-    status: string;
+  tasksByPriority: {
+    priority: string;
+
     count: number;
   }[];
 
-  priorities: {
-    priority: string;
+  tasksByStatus: {
+    status: string;
+
     count: number;
   }[];
 }

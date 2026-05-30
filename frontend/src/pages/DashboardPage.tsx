@@ -1,8 +1,13 @@
 import {
+    useEffect,
+    useState,
+} from "react";
+
+import {
     Activity,
     FolderKanban,
-    Users,
     CheckCircle2,
+    Users,
 } from "lucide-react";
 
 import {
@@ -12,82 +17,56 @@ import {
     ResponsiveContainer,
     Tooltip,
     BarChart,
-    Bar,
     XAxis,
     YAxis,
+    CartesianGrid,
+    Bar,
 } from "recharts";
 
-import {
-    useEffect,
-    useState,
-} from "react";
-
-import type { AxiosError } from "axios";
-
 import AppLayout
-    from "../layouts/AppLayout";
+    from "../../../layouts/AppLayout";
 
 import { api }
-    from "../api/client";
+    from "../../../api/client";
 
-import type { DashboardStats } from "../features/dashboard/types/dashboard";
+import { DashboardData }
+    from "../types/dashboard";
 
 const COLORS = [
-    "#3b82f6",
-    "#8b5cf6",
-    "#f59e0b",
-    "#ef4444",
+    "#3B82F6",
+    "#10B981",
+    "#F59E0B",
+    "#EF4444",
 ];
 
 export default function DashboardPage () {
-    const [stats, setStats] =
-        useState<DashboardStats | null>(
+    const [data, setData]
+        = useState<DashboardData | null>(
             null
         );
 
-    const [error, setError] =
-        useState<string | null>(null);
-
-    async function loadStats () {
+    async function loadDashboard () {
         try {
             const response =
                 await api.get(
-                    "/dashboard/stats"
+                    "/analytics/dashboard"
                 );
 
-            setStats(response.data);
-        } catch (err) {
-            const axiosError =
-                err as AxiosError<{
-                    message?: string;
-                }>;
-
-            setError(
-                axiosError.response?.data?.message ??
-                "Unable to load dashboard data"
-            );
+            setData(response.data);
+        } catch (error) {
+            console.error(error);
         }
     }
 
     useEffect(() => {
-        loadStats();
+        loadDashboard();
     }, []);
 
-    if (!stats) {
-        if (error) {
-            return (
-                <AppLayout>
-                    <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-6 text-red-200">
-                        { error }
-                    </div>
-                </AppLayout>
-            );
-        }
-
+    if (!data) {
         return (
             <AppLayout>
-                <div className="text-white">
-                    Loading dashboard...
+                <div className="flex items-center justify-center h-[70vh]">
+                    <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
                 </div>
             </AppLayout>
         );
@@ -98,68 +77,84 @@ export default function DashboardPage () {
             <div className="space-y-8">
                 {/* HERO */ }
 
-                <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-10">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.25),transparent_35%)]" />
+                <div className="relative overflow-hidden rounded-[32px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 p-8">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(59,130,246,0.18),transparent_35%)]" />
 
                     <div className="relative z-10">
                         <p className="text-blue-400 font-medium">
-                            Productivity Dashboard
+                            Analytics Overview
                         </p>
 
                         <h1 className="mt-4 text-5xl font-bold tracking-tight">
-                            Welcome back 👋
+                            Dashboard
                         </h1>
 
-                        <p className="mt-4 max-w-2xl text-slate-400 text-lg">
-                            Monitor your projects,
-                            teams and workflow
-                            performance in real time.
+                        <p className="mt-4 max-w-2xl text-lg text-slate-400">
+                            Monitor projects,
+                            productivity and team
+                            performance in real
+                            time.
                         </p>
                     </div>
                 </div>
 
-                {/* STATS */ }
+                {/* KPI */ }
 
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                     <StatCard
-                        icon={ <FolderKanban /> }
+                        title="Total Tasks"
+                        value={ data.totalTasks }
+                        icon={
+                            <Activity className="w-6 h-6" />
+                        }
+                    />
+
+                    <StatCard
+                        title="Completed"
+                        value={
+                            data.completedTasks
+                        }
+                        icon={
+                            <CheckCircle2 className="w-6 h-6" />
+                        }
+                    />
+
+                    <StatCard
                         title="Projects"
-                        value={ stats.totalProjects }
+                        value={
+                            data.totalProjects
+                        }
+                        icon={
+                            <FolderKanban className="w-6 h-6" />
+                        }
                     />
 
                     <StatCard
-                        icon={ <Users /> }
-                        title="Teams"
-                        value={ stats.totalTeams }
-                    />
-
-                    <StatCard
-                        icon={ <Activity /> }
-                        title="Tasks"
-                        value={ stats.totalTasks }
-                    />
-
-                    <StatCard
-                        icon={ <CheckCircle2 /> }
-                        title="Productivity"
-                        value={ `${stats.productivity}%` }
+                        title="Team Members"
+                        value={
+                            data.totalUsers
+                        }
+                        icon={
+                            <Users className="w-6 h-6" />
+                        }
                     />
                 </div>
 
                 {/* CHARTS */ }
 
                 <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    {/* PIE */ }
+                    {/* PRIORITIES */ }
 
-                    <div className="rounded-[28px] border border-white/10 bg-slate-900/70 backdrop-blur-xl p-6">
+                    <div className="rounded-[32px] border border-white/10 bg-slate-900/70 backdrop-blur-xl p-6">
                         <div className="mb-6">
-                            <h2 className="text-2xl font-semibold">
-                                Tasks by Status
+                            <h2 className="text-2xl font-bold">
+                                Tasks by Priority
                             </h2>
 
-                            <p className="text-slate-400 mt-2">
-                                Current workflow
-                                distribution
+                            <p className="mt-2 text-slate-400">
+                                Distribution of task
+                                priorities across all
+                                projects.
                             </p>
                         </div>
 
@@ -171,16 +166,21 @@ export default function DashboardPage () {
                                 <PieChart>
                                     <Pie
                                         data={
-                                            stats.tasksPerStatus
+                                            data.tasksByPriority
                                         }
                                         dataKey="count"
-                                        nameKey="status"
+                                        nameKey="priority"
                                         outerRadius={ 120 }
                                     >
-                                        { stats.tasksPerStatus.map(
-                                            (_, index) => (
+                                        { data.tasksByPriority.map(
+                                            (
+                                                _,
+                                                index
+                                            ) => (
                                                 <Cell
-                                                    key={ index }
+                                                    key={
+                                                        index
+                                                    }
                                                     fill={
                                                         COLORS[
                                                         index %
@@ -198,16 +198,17 @@ export default function DashboardPage () {
                         </div>
                     </div>
 
-                    {/* BAR */ }
+                    {/* STATUS */ }
 
-                    <div className="rounded-[28px] border border-white/10 bg-slate-900/70 backdrop-blur-xl p-6">
+                    <div className="rounded-[32px] border border-white/10 bg-slate-900/70 backdrop-blur-xl p-6">
                         <div className="mb-6">
-                            <h2 className="text-2xl font-semibold">
-                                Task Priorities
+                            <h2 className="text-2xl font-bold">
+                                Tasks by Status
                             </h2>
 
-                            <p className="text-slate-400 mt-2">
-                                Priority distribution
+                            <p className="mt-2 text-slate-400">
+                                Current workflow
+                                distribution.
                             </p>
                         </div>
 
@@ -218,56 +219,61 @@ export default function DashboardPage () {
                             >
                                 <BarChart
                                     data={
-                                        stats.priorities
+                                        data.tasksByStatus
                                     }
                                 >
-                                    <XAxis dataKey="priority" />
+                                    <CartesianGrid strokeDasharray="3 3" />
+
+                                    <XAxis dataKey="status" />
 
                                     <YAxis />
 
                                     <Tooltip />
 
-                                    <Bar dataKey="count" />
+                                    <Bar
+                                        dataKey="count"
+                                        radius={ [
+                                            8,
+                                            8,
+                                            0,
+                                            0,
+                                        ] }
+                                    />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
                     </div>
                 </div>
 
-                {/* RECENT ACTIVITY */ }
+                {/* PRODUCTIVITY */ }
 
-                <div className="rounded-[28px] border border-white/10 bg-slate-900/70 backdrop-blur-xl p-6">
-                    <div className="flex items-center justify-between mb-8">
+                <div className="rounded-[32px] border border-white/10 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 p-8">
+                    <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-2xl font-semibold">
-                                Recent Activity
+                            <p className="text-blue-400 font-medium">
+                                Productivity
+                            </p>
+
+                            <h2 className="mt-3 text-5xl font-bold">
+                                { Math.round(
+                                    data.productivity
+                                ) }
+                                %
                             </h2>
 
-                            <p className="text-slate-400 mt-2">
-                                Latest workspace updates
+                            <p className="mt-4 text-slate-400">
+                                Team completion rate
+                                based on finished
+                                tasks.
                             </p>
                         </div>
 
-                        <button className="rounded-2xl bg-blue-500/20 hover:bg-blue-500/30 transition px-5 py-3 text-blue-300">
-                            View All
-                        </button>
-                    </div>
-
-                    <div className="space-y-5">
-                        <ActivityItem
-                            title="Dashboard redesign completed"
-                            time="2 hours ago"
-                        />
-
-                        <ActivityItem
-                            title="New task created in Kanban"
-                            time="5 hours ago"
-                        />
-
-                        <ActivityItem
-                            title="Team sprint updated"
-                            time="Yesterday"
-                        />
+                        <div className="hidden lg:flex w-40 h-40 rounded-full border-[14px] border-blue-500 items-center justify-center text-4xl font-bold">
+                            { Math.round(
+                                data.productivity
+                            ) }
+                            %
+                        </div>
                     </div>
                 </div>
             </div>
@@ -276,61 +282,27 @@ export default function DashboardPage () {
 }
 
 function StatCard ({
-    icon,
     title,
     value,
+    icon,
 }: {
+    title: string;
+    value: number;
     icon: React.ReactNode;
-    title: string;
-    value: string | number;
 }) {
     return (
-        <div className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-slate-900/70 backdrop-blur-xl p-6 hover:border-blue-500/40 transition-all duration-300">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition" />
-
-            <div className="relative z-10">
-                <div className="w-14 h-14 rounded-2xl bg-blue-500/15 flex items-center justify-center text-blue-400">
-                    { icon }
-                </div>
-
-                <p className="mt-6 text-slate-400">
-                    { title }
-                </p>
-
-                <h2 className="mt-2 text-4xl font-bold tracking-tight">
-                    { value }
-                </h2>
-            </div>
-        </div>
-    );
-}
-
-function ActivityItem ({
-    title,
-    time,
-}: {
-    title: string;
-    time: string;
-}) {
-    return (
-        <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-slate-950/50 px-5 py-4 hover:border-blue-500/30 transition">
-            <div className="flex items-center gap-4">
-                <div className="w-3 h-3 rounded-full bg-blue-400" />
-
-                <div>
-                    <h3 className="font-medium">
-                        { title }
-                    </h3>
-
-                    <p className="text-sm text-slate-400 mt-1">
-                        { time }
-                    </p>
-                </div>
+        <div className="rounded-[28px] border border-white/10 bg-slate-900/70 backdrop-blur-xl p-6">
+            <div className="w-14 h-14 rounded-2xl bg-blue-500/15 flex items-center justify-center text-blue-400">
+                { icon }
             </div>
 
-            <button className="text-sm text-blue-400 hover:text-blue-300">
-                Open
-            </button>
+            <p className="mt-5 text-slate-400">
+                { title }
+            </p>
+
+            <h2 className="mt-2 text-4xl font-bold">
+                { value }
+            </h2>
         </div>
     );
 }

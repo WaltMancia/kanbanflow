@@ -20,6 +20,7 @@ import KanbanPage
 import { Toaster }
   from "react-hot-toast";
 
+
 function ProtectedRoute ({
   children,
 }: {
