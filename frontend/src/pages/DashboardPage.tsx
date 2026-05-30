@@ -24,13 +24,12 @@ import {
 } from "recharts";
 
 import AppLayout
-    from "../../../layouts/AppLayout";
+    from "../layouts/AppLayout";
 
 import { api }
-    from "../../../api/client";
+    from "../api/client";
 
-import { DashboardData }
-    from "../types/dashboard";
+import type { DashboardData } from "../features/dashboard/types/dashboard";
 
 const COLORS = [
     "#3B82F6",
