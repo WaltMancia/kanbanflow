@@ -10,7 +10,11 @@ import {
     useGlobalSearch,
 } from "../hooks/useGlobalSearch";
 
+import SearchResultList
+    from "./SearchResultList";
+
 export default function GlobalSearch () {
+
     const [query, setQuery]
         = useState("");
 
@@ -23,16 +27,17 @@ export default function GlobalSearch () {
 
     return (
         <div className="relative w-[420px]">
+
             <Search
                 className="
-          absolute
-          left-4
-          top-1/2
-          -translate-y-1/2
-          w-5
-          h-5
-          text-slate-400
-        "
+                    absolute
+                    left-4
+                    top-1/2
+                    -translate-y-1/2
+                    w-5
+                    h-5
+                    text-slate-400
+                "
             />
 
             <input
@@ -42,53 +47,43 @@ export default function GlobalSearch () {
                         e.target.value
                     )
                 }
-                placeholder="Search projects, tasks, users..."
+                placeholder="Search projects, tasks, teams..."
                 className="
-          w-full
-          pl-12
-          pr-4
-          py-3
-          rounded-2xl
-          bg-slate-900
-          border
-          border-white/10
-          outline-none
-        "
+                    w-full
+                    pl-12
+                    pr-4
+                    py-3
+                    rounded-2xl
+                    bg-slate-900
+                    border
+                    border-white/10
+                    outline-none
+                    focus:border-blue-500
+                "
             />
 
             { query &&
                 results && (
+
                     <div
                         className="
-            absolute
-            mt-2
-            w-full
-            rounded-2xl
-            border
-            border-white/10
-            bg-slate-950
-            p-4
-            shadow-2xl
-            z-50
-          "
+                            absolute
+                            mt-2
+                            w-full
+                            rounded-2xl
+                            border
+                            border-white/10
+                            bg-slate-950
+                            p-3
+                            shadow-2xl
+                            z-50
+                        "
                     >
-                        <div>
-                            <h4 className="text-xs uppercase text-slate-500 mb-2">
-                                Projects
-                            </h4>
-
-                            { results.projects.map(
-                                (p) => (
-                                    <div
-                                        key={ p.id }
-                                        className="py-2"
-                                    >
-                                        { p.name }
-                                    </div>
-                                )
-                            ) }
-                        </div>
+                        <SearchResultList
+                            results={ results }
+                        />
                     </div>
+
                 ) }
         </div>
     );
