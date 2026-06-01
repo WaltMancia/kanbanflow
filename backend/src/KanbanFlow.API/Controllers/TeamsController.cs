@@ -29,6 +29,20 @@ public class TeamsController : ControllerBase
     {
         var teams = await _context.Teams
             .Include(x => x.Owner)
+            .Select(x => new
+            {
+                x.Id,
+                x.Name,
+                x.Description,
+                Owner = x.Owner == null
+                    ? null
+                    : new
+                    {
+                        x.Owner.Id,
+                        x.Owner.Name,
+                        x.Owner.Email
+                    }
+            })
             .ToListAsync();
 
         return Ok(teams);

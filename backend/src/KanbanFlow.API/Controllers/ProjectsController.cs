@@ -30,6 +30,19 @@ public class ProjectsController
         var projects =
             await _context.Projects
                 .Include(x => x.Team)
+                .Select(x => new
+                {
+                    x.Id,
+                    x.Name,
+                    x.Description,
+                    Team = x.Team == null
+                        ? null
+                        : new
+                        {
+                            x.Team.Id,
+                            x.Team.Name
+                        }
+                })
                 .ToListAsync();
 
         return Ok(projects);

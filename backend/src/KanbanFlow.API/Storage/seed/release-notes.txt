@@ -1,0 +1,4 @@
+KanbanFlow seed release notes
+- Login flow verified
+- Dashboard stats loaded
+- Projects and teams ready for demo
