@@ -77,9 +77,7 @@ export default function CommandPalette ({
                     >
                         <Command.Item
                             onSelect={ () =>
-                                navigate(
-                                    "/dashboard"
-                                )
+                                navigate("/")
                             }
                         >
                             Dashboard

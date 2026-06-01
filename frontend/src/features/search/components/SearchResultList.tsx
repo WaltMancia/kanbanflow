@@ -69,7 +69,7 @@ export default function SearchResultList ({
                     items={ results.users.map(
                         (x) => ({
                             id: x.id,
-                            label: x.fullName,
+                            label: x.name,
                         })
                     ) }
                 />

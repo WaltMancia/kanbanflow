@@ -11,6 +11,12 @@ import LoginPage
 import DashboardPage
   from "./pages/DashboardPage";
 
+import ProjectsPage
+  from "./pages/ProjectsPage";
+
+import TeamsPage
+  from "./pages/TeamsPage";
+
 import { useAuthStore }
   from "./store/authStore";
 
@@ -62,10 +68,37 @@ export default function App () {
         />
 
         <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/kanban"
           element={
             <ProtectedRoute>
               <KanbanPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/projects"
+          element={
+            <ProtectedRoute>
+              <ProjectsPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/teams"
+          element={
+            <ProtectedRoute>
+              <TeamsPage />
             </ProtectedRoute>
           }
         />

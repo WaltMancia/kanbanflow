@@ -11,7 +11,7 @@ export interface SearchResponse {
 
   users: {
     id: number;
-    fullName: string;
+    name: string;
   }[];
 
   teams: {

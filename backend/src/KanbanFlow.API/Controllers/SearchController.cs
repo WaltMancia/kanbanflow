@@ -91,14 +91,14 @@ public class SearchController
             await _context.Users
                 .Where(
                     x =>
-                        x.FullName.Contains(q)
+                        x.Name.Contains(q)
                 )
                 .Take(5)
                 .Select(
                     x => new
                     {
                         x.Id,
-                        x.FullName
+                        x.Name
                     }
                 )
                 .ToListAsync();
