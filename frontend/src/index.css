@@ -38,3 +38,9 @@ body {
     border-color:
         var(--border);
 }
+
+/* CMDK Command Palette Highlighted Item Style */
+[data-selected="true"] {
+    background-color: rgba(59, 130, 246, 0.15) !important;
+    color: #60a5fa !important;
+}

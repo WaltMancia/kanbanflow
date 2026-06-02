@@ -67,6 +67,30 @@ public static class DatabaseSeeder
             UserRole.Member
         );
 
+        var marketingLead = await EnsureUserAsync(
+            context,
+            "Marta Marketing",
+            "marta.marketing@kanbanflow.com",
+            "Marketing123!",
+            UserRole.Manager
+        );
+
+        var operationsLead = await EnsureUserAsync(
+            context,
+            "Ivan Ops",
+            "ivan.ops@kanbanflow.com",
+            "Ops123!",
+            UserRole.Manager
+        );
+
+        var contentStrategist = await EnsureUserAsync(
+            context,
+            "Clara Content",
+            "clara.content@kanbanflow.com",
+            "Content123!",
+            UserRole.Member
+        );
+
         await context.SaveChangesAsync();
 
         var developmentTeam = await EnsureTeamAsync(
@@ -95,6 +119,27 @@ public static class DatabaseSeeder
             "Support Team",
             "Customer escalations and documentation",
             supportAgent.Id
+        );
+
+        var marketingTeam = await EnsureTeamAsync(
+            context,
+            "Marketing Team",
+            "Campaigns, messaging and launch coordination",
+            marketingLead.Id
+        );
+
+        var operationsTeam = await EnsureTeamAsync(
+            context,
+            "Operations Team",
+            "Infrastructure, reliability and internal tooling",
+            operationsLead.Id
+        );
+
+        var contentTeam = await EnsureTeamAsync(
+            context,
+            "Content Team",
+            "Documentation, SEO and educational content",
+            contentStrategist.Id
         );
 
         await context.SaveChangesAsync();
@@ -131,6 +176,41 @@ public static class DatabaseSeeder
             context,
             "Customer Success Hub",
             "Knowledge base and support workflows",
+            supportTeam.Id
+        );
+
+        var launchCampaignProject = await EnsureProjectAsync(
+            context,
+            "Q3 Launch Campaign",
+            "Launch planning, ads and email automation",
+            marketingTeam.Id
+        );
+
+        var opsMonitoringProject = await EnsureProjectAsync(
+            context,
+            "Ops Monitoring Center",
+            "Dashboards, alerts and incident visibility",
+            operationsTeam.Id
+        );
+
+        var seoProject = await EnsureProjectAsync(
+            context,
+            "SEO Sprint",
+            "Search optimization and landing page improvements",
+            marketingTeam.Id
+        );
+
+        var contentLibraryProject = await EnsureProjectAsync(
+            context,
+            "Brand Content Library",
+            "Reusable copy, docs and campaign assets",
+            contentTeam.Id
+        );
+
+        var helpCenterProject = await EnsureProjectAsync(
+            context,
+            "Help Center Revamp",
+            "Improve article structure and self-service support",
             supportTeam.Id
         );
 
@@ -246,6 +326,94 @@ public static class DatabaseSeeder
             DateTime.UtcNow.AddDays(1)
         );
 
+        var task11 = await EnsureTaskAsync(
+            context,
+            "Plan Q3 Launch",
+            "Align the campaign timeline across marketing and product",
+            launchCampaignProject.Id,
+            TaskPriority.Urgent,
+            TaskStatus.InProgress,
+            marketingLead.Id,
+            DateTime.UtcNow.AddDays(6)
+        );
+
+        var task12 = await EnsureTaskAsync(
+            context,
+            "Build Incident Dashboard",
+            "Track uptime, alerts and incident response metrics",
+            opsMonitoringProject.Id,
+            TaskPriority.High,
+            TaskStatus.Todo,
+            operationsLead.Id,
+            DateTime.UtcNow.AddDays(9)
+        );
+
+        var task13 = await EnsureTaskAsync(
+            context,
+            "Write SEO Audit",
+            "Review keywords, metadata and page structure",
+            seoProject.Id,
+            TaskPriority.Medium,
+            TaskStatus.InProgress,
+            contentStrategist.Id,
+            DateTime.UtcNow.AddDays(4)
+        );
+
+        var task14 = await EnsureTaskAsync(
+            context,
+            "Curate Brand Assets",
+            "Keep reusable headlines, visuals and CTA copy organized",
+            contentLibraryProject.Id,
+            TaskPriority.Low,
+            TaskStatus.Done,
+            designer.Id,
+            DateTime.UtcNow.AddDays(-4)
+        );
+
+        var task15 = await EnsureTaskAsync(
+            context,
+            "Update Help Center Categories",
+            "Restructure articles for quicker discovery",
+            helpCenterProject.Id,
+            TaskPriority.High,
+            TaskStatus.InProgress,
+            supportAgent.Id,
+            DateTime.UtcNow.AddDays(3)
+        );
+
+        var task16 = await EnsureTaskAsync(
+            context,
+            "Prepare Launch Email",
+            "Draft the launch announcement and follow-up sequence",
+            launchCampaignProject.Id,
+            TaskPriority.Medium,
+            TaskStatus.Todo,
+            marketingLead.Id,
+            DateTime.UtcNow.AddDays(2)
+        );
+
+        var task17 = await EnsureTaskAsync(
+            context,
+            "Document Incident Playbook",
+            "Summarize escalation and rollback steps for ops",
+            opsMonitoringProject.Id,
+            TaskPriority.Medium,
+            TaskStatus.Done,
+            operationsLead.Id,
+            DateTime.UtcNow.AddDays(-1)
+        );
+
+        var task18 = await EnsureTaskAsync(
+            context,
+            "Improve Search Snippets",
+            "Add preview copy for SEO pages and meta descriptions",
+            seoProject.Id,
+            TaskPriority.High,
+            TaskStatus.Review,
+            contentStrategist.Id,
+            DateTime.UtcNow.AddDays(5)
+        );
+
         await context.SaveChangesAsync();
 
         await EnsureCommentAsync(
@@ -297,6 +465,41 @@ public static class DatabaseSeeder
             "Critical flows are green except the attachment download edge case."
         );
 
+        await EnsureCommentAsync(
+            context,
+            task11.Id,
+            marketingLead.Id,
+            "Campaign calendar is drafted. Waiting on final approval from product."
+        );
+
+        await EnsureCommentAsync(
+            context,
+            task12.Id,
+            operationsLead.Id,
+            "We should wire alerts to Slack and add a basic uptime widget."
+        );
+
+        await EnsureCommentAsync(
+            context,
+            task13.Id,
+            contentStrategist.Id,
+            "Keyword list is ready. Next step is refining the intro sections."
+        );
+
+        await EnsureCommentAsync(
+            context,
+            task15.Id,
+            supportAgent.Id,
+            "Article taxonomy looks cleaner already. Need one final pass on labels."
+        );
+
+        await EnsureCommentAsync(
+            context,
+            task18.Id,
+            designer.Id,
+            "Search snippets will match the refreshed content once we merge the copy."
+        );
+
         await context.SaveChangesAsync();
 
         var storageSeedDir = Path.Combine(
@@ -326,6 +529,22 @@ public static class DatabaseSeeder
             (
                 "support-playbook.txt",
                 "Support playbook seed file for customer success demo data."
+            ),
+            (
+                "launch-email.md",
+                "# Launch Email\n\nAnnounce the Q3 launch with a short value-driven message."
+            ),
+            (
+                "incident-playbook.txt",
+                "Incident playbook seed file for operational response and escalation."
+            ),
+            (
+                "seo-audit.txt",
+                "SEO audit summary for seeded analytics and landing page improvements."
+            ),
+            (
+                "content-library.txt",
+                "Brand content library notes with approved headlines and CTA copy."
             )
         };
 
@@ -383,6 +602,46 @@ public static class DatabaseSeeder
             "/storage/seed/qa-checklist.md",
             "text/markdown",
             81
+        );
+
+        await EnsureAttachmentAsync(
+            context,
+            task11.Id,
+            marketingLead.Id,
+            "launch-email.md",
+            "/storage/seed/launch-email.md",
+            "text/markdown",
+            74
+        );
+
+        await EnsureAttachmentAsync(
+            context,
+            task12.Id,
+            operationsLead.Id,
+            "incident-playbook.txt",
+            "/storage/seed/incident-playbook.txt",
+            "text/plain",
+            68
+        );
+
+        await EnsureAttachmentAsync(
+            context,
+            task13.Id,
+            contentStrategist.Id,
+            "seo-audit.txt",
+            "/storage/seed/seo-audit.txt",
+            "text/plain",
+            70
+        );
+
+        await EnsureAttachmentAsync(
+            context,
+            task14.Id,
+            designer.Id,
+            "content-library.txt",
+            "/storage/seed/content-library.txt",
+            "text/plain",
+            66
         );
 
         await context.SaveChangesAsync();

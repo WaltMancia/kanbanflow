@@ -4,6 +4,8 @@ import {
     Draggable,
 } from "@hello-pangea/dnd";
 
+import { useSearchParams } from "react-router-dom";
+
 import {
     useEffect,
     useState,
@@ -75,6 +77,18 @@ export default function KanbanPage () {
         = useState<Task | null>(
             null
         );
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const taskIdParam = searchParams.get("task");
+
+    useEffect(() => {
+        if (taskIdParam && tasks.length > 0) {
+            const task = tasks.find(t => String(t.id) === taskIdParam);
+            if (task) {
+                setSelectedTask(task);
+            }
+        }
+    }, [taskIdParam, tasks]);
 
     async function loadTasks () {
         try {
@@ -365,11 +379,14 @@ export default function KanbanPage () {
                                                                     }
                                                                     { ...provided.draggableProps }
                                                                     { ...provided.dragHandleProps }
-                                                                    onClick={ () =>
-                                                                        setSelectedTask(
-                                                                            task
-                                                                        )
-                                                                    }
+                                                                    onClick={ () => {
+                                                                        setSelectedTask(task);
+                                                                        setSearchParams((prev) => {
+                                                                            const next = new URLSearchParams(prev);
+                                                                            next.set("task", String(task.id));
+                                                                            return next;
+                                                                        });
+                                                                    } }
                                                                     className={ `
                                     group rounded-[24px] border p-5 transition-all duration-300 cursor-pointer
                                     ${snapshot.isDragging
@@ -448,9 +465,14 @@ export default function KanbanPage () {
 
             <TaskModal
                 task={ selectedTask }
-                onClose={ () =>
-                    setSelectedTask(null)
-                }
+                onClose={ () => {
+                    setSelectedTask(null);
+                    setSearchParams((prev) => {
+                        const next = new URLSearchParams(prev);
+                        next.delete("task");
+                        return next;
+                    });
+                } }
             />
         </AppLayout>
     );

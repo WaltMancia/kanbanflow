@@ -10,7 +10,10 @@ export function useGlobalSearch(query: string) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!query.trim()) return;
+    if (!query.trim()) {
+      setResults(undefined);
+      return;
+    }
 
     const timeout = setTimeout(async () => {
       setLoading(true);
