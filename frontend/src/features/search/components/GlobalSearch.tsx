@@ -26,7 +26,7 @@ export default function GlobalSearch () {
         );
 
     return (
-        <div className="relative w-[420px]">
+        <div className="relative w-full max-w-[420px]">
 
             <Search
                 className="
