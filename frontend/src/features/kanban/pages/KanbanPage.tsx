@@ -66,6 +66,27 @@ const COLORS: Record<
         "bg-red-500/15 text-red-400 border border-red-500/20",
 };
 
+const COLUMN_DRAG_STYLES: Record<string, string> = {
+    Todo: "border-blue-500/30 bg-slate-900/90 shadow-lg shadow-blue-500/5",
+    InProgress: "border-yellow-500/30 bg-slate-900/90 shadow-lg shadow-yellow-500/5",
+    Review: "border-purple-500/30 bg-slate-900/90 shadow-lg shadow-purple-500/5",
+    Done: "border-emerald-500/30 bg-slate-900/90 shadow-lg shadow-emerald-500/5",
+};
+
+const COLUMN_HEADER_BADGE: Record<string, string> = {
+    Todo: "bg-blue-500/15 text-blue-300 border-blue-500/20",
+    InProgress: "bg-yellow-500/15 text-yellow-300 border-yellow-500/20",
+    Review: "bg-purple-500/15 text-purple-300 border-purple-500/20",
+    Done: "bg-emerald-500/15 text-emerald-300 border-emerald-500/20",
+};
+
+const CARD_PRIORITY_BORDER: Record<string, string> = {
+    Low: "border-l-4 border-l-emerald-500/75 hover:shadow-emerald-500/5",
+    Medium: "border-l-4 border-l-yellow-500/75 hover:shadow-yellow-500/5",
+    High: "border-l-4 border-l-orange-500/75 hover:shadow-orange-500/5",
+    Urgent: "border-l-4 border-l-red-500/75 hover:shadow-red-500/5",
+};
+
 export default function KanbanPage () {
     const [tasks, setTasks]
         = useState<Task[]>([]);
@@ -315,13 +336,19 @@ export default function KanbanPage () {
                                     }
                                     key={ column }
                                 >
-                                    { (provided) => (
+                                    { (provided, snapshot) => (
                                         <div
                                             ref={
                                                 provided.innerRef
                                             }
                                             { ...provided.droppableProps }
-                                            className="rounded-[28px] border border-white/10 bg-slate-900/70 backdrop-blur-xl p-5 min-h-[700px]"
+                                            className={ `
+                                                rounded-[28px] border p-5 transition-all duration-300 min-h-[700px] backdrop-blur-xl
+                                                ${snapshot.isDraggingOver
+                                                    ? COLUMN_DRAG_STYLES[column]
+                                                    : "border-white/10 bg-slate-900/70"
+                                                }
+                                            ` }
                                         >
                                             {/* COLUMN HEADER */ }
 
@@ -343,7 +370,7 @@ export default function KanbanPage () {
                                                     </p>
                                                 </div>
 
-                                                <div className="rounded-2xl bg-blue-500/15 px-4 py-2 text-sm text-blue-300 border border-blue-500/20">
+                                                <div className={ `rounded-2xl px-4 py-2 text-sm border font-medium transition-all duration-300 ${COLUMN_HEADER_BADGE[column]}` }>
                                                     {
                                                         columnTasks.length
                                                     }
@@ -391,7 +418,7 @@ export default function KanbanPage () {
                                     group rounded-[24px] border p-5 transition-all duration-300 cursor-pointer
                                     ${snapshot.isDragging
                                                                             ? "border-blue-500 bg-slate-900 shadow-2xl scale-[1.02]"
-                                                                            : "border-white/10 bg-slate-950/60 hover:border-blue-500/40 hover:-translate-y-1"
+                                                                            : `border-white/10 bg-slate-950/60 hover:border-blue-500/40 hover:-translate-y-1 hover:shadow-xl ${CARD_PRIORITY_BORDER[task.priority]}`
                                                                         }
                                   `}
                                                                 >
