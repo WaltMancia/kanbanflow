@@ -11,6 +11,8 @@ import {
     useState,
 } from "react";
 
+import { Search, X } from "lucide-react";
+
 import toast
     from "react-hot-toast";
 
@@ -101,6 +103,18 @@ export default function KanbanPage () {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const taskIdParam = searchParams.get("task");
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
+
+    const filteredTasks = tasks.filter((task) => {
+        const matchesSearch =
+            task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            task.description.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesPriority =
+            !selectedPriority || task.priority === selectedPriority;
+        return matchesSearch && matchesPriority;
+    });
 
     useEffect(() => {
         if (taskIdParam && tasks.length > 0) {
@@ -315,6 +329,66 @@ export default function KanbanPage () {
                     </div>
                 </div>
 
+                {/* FILTERS */}
+                <div className="rounded-[28px] border border-white/10 bg-slate-900/40 backdrop-blur-xl p-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="relative w-full md:w-96">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                        <input
+                            type="text"
+                            placeholder="Search tasks by title or description..."
+                            value={ searchQuery }
+                            onChange={ (e) => setSearchQuery(e.target.value) }
+                            className="w-full pl-12 pr-10 py-3 rounded-2xl border border-white/10 bg-slate-950/80 outline-none focus:border-blue-500/50 transition-all text-sm placeholder:text-slate-500"
+                        />
+                        { searchQuery && (
+                            <button
+                                onClick={ () => setSearchQuery("") }
+                                className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-slate-400 hover:text-white transition"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+                        ) }
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-start md:justify-end">
+                        <span className="text-sm font-medium text-slate-400 mr-2">Priority:</span>
+                        
+                        <button
+                            onClick={ () => setSelectedPriority(null) }
+                            className={ `px-4 py-2 rounded-xl text-xs font-semibold border transition-all duration-300 ${
+                                !selectedPriority
+                                    ? "bg-blue-500/15 text-blue-300 border-blue-500/30"
+                                    : "bg-transparent text-slate-400 border-white/5 hover:border-white/10"
+                            }` }
+                        >
+                            All
+                        </button>
+
+                        {(["Low", "Medium", "High", "Urgent"] as const).map((prio) => {
+                            const isActive = selectedPriority === prio;
+                            const colors: Record<string, string> = {
+                                Low: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25",
+                                Medium: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/25",
+                                High: "bg-orange-500/15 text-orange-400 border-orange-500/30 hover:bg-orange-500/25",
+                                Urgent: "bg-red-500/15 text-red-400 border-red-500/30 hover:bg-red-500/25",
+                            };
+                            return (
+                                <button
+                                    key={ prio }
+                                    onClick={ () => setSelectedPriority(isActive ? null : prio) }
+                                    className={ `px-4 py-2 rounded-xl text-xs font-semibold border transition-all duration-300 ${
+                                        isActive
+                                            ? colors[prio]
+                                            : "bg-transparent text-slate-400 border-white/5 hover:border-white/10"
+                                    }` }
+                                >
+                                    { prio }
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+
                 {/* BOARD */ }
 
                 <DragDropContext
@@ -323,7 +397,7 @@ export default function KanbanPage () {
                     <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-6">
                         { columns.map((column) => {
                             const columnTasks =
-                                tasks.filter(
+                                filteredTasks.filter(
                                     (x) =>
                                         x.status ===
                                         column
