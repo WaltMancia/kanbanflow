@@ -116,6 +116,10 @@ export default function KanbanPage () {
         return matchesSearch && matchesPriority;
     });
 
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter((x) => x.status === "Done").length;
+    const completionPercentage = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
     useEffect(() => {
         if (taskIdParam && tasks.length > 0) {
             const task = tasks.find(t => String(t.id) === taskIdParam);
@@ -304,6 +308,20 @@ export default function KanbanPage () {
                                     { onlineUsers } users
                                     online
                                 </span>
+                            </div>
+
+                            {/* PROGRESS BAR */}
+                            <div className="mt-6 max-w-sm">
+                                <div className="flex justify-between items-center mb-2">
+                                    <span className="text-xs uppercase tracking-wider text-slate-400 font-medium">Board Completion</span>
+                                    <span className="text-xs font-bold text-blue-400">{ completionPercentage }%</span>
+                                </div>
+                                <div className="h-2 w-full bg-slate-950/60 rounded-full overflow-hidden border border-white/5">
+                                    <div 
+                                        className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 transition-all duration-500 ease-out" 
+                                        style={{ width: `${completionPercentage}%` }}
+                                    />
+                                </div>
                             </div>
                         </div>
 
