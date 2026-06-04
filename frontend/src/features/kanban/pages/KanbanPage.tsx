@@ -252,6 +252,17 @@ export default function KanbanPage () {
                 );
 
                 connection.on(
+                    "TaskDeleted",
+                    () => {
+                        toast(
+                            "A task was deleted"
+                        );
+
+                        loadTasks();
+                    }
+                );
+
+                connection.on(
                     "UserConnected",
                     () => {
                         setOnlineUsers(
@@ -293,6 +304,10 @@ export default function KanbanPage () {
 
             connection.off(
                 "CommentCreated"
+            );
+
+            connection.off(
+                "TaskDeleted"
             );
 
             connection.off(
@@ -732,6 +747,15 @@ export default function KanbanPage () {
                         next.delete("task");
                         return next;
                     });
+                } }
+                onDeleted={ () => {
+                    setSelectedTask(null);
+                    setSearchParams((prev) => {
+                        const next = new URLSearchParams(prev);
+                        next.delete("task");
+                        return next;
+                    });
+                    loadTasks();
                 } }
             />
         </AppLayout>

@@ -116,4 +116,66 @@ public class TasksController
 
         return Ok(task);
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateTask(
+        int id,
+        UpdateTaskDto dto
+    )
+    {
+        var task = await _context.Tasks
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (task == null)
+        {
+            return NotFound();
+        }
+
+        Enum.TryParse<TaskPriority>(
+            dto.Priority,
+            true,
+            out var priority
+        );
+
+        task.Title = dto.Title;
+        task.Description = dto.Description;
+        task.Priority = priority;
+        task.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        // ===== REALTIME EVENT =====
+
+        await _hub.Clients.All.SendAsync(
+            "TaskUpdated",
+            task
+        );
+
+        return Ok(task);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTask(int id)
+    {
+        var task = await _context.Tasks
+            .FirstOrDefaultAsync(x => x.Id == id);
+
+        if (task == null)
+        {
+            return NotFound();
+        }
+
+        _context.Tasks.Remove(task);
+
+        await _context.SaveChangesAsync();
+
+        // ===== REALTIME EVENT =====
+
+        await _hub.Clients.All.SendAsync(
+            "TaskDeleted",
+            id
+        );
+
+        return Ok(new { id });
+    }
 }

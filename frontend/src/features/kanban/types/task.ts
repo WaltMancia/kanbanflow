@@ -8,4 +8,19 @@ export interface Task {
   priority: string;
 
   status: string;
+
+  createdAt?: string;
+
+  dueDate?: string | null;
+
+  project?: {
+    id: number;
+    name: string;
+  } | null;
+
+  assignee?: {
+    id: number;
+    name: string;
+    email: string;
+  } | null;
 }
