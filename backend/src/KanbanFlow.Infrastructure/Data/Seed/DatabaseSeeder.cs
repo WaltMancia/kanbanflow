@@ -91,6 +91,22 @@ public static class DatabaseSeeder
             UserRole.Member
         );
 
+        var financeLead = await EnsureUserAsync(
+            context,
+            "Mila Finance",
+            "mila.finance@kanbanflow.com",
+            "Finance123!",
+            UserRole.Manager
+        );
+
+        var salesLead = await EnsureUserAsync(
+            context,
+            "Pedro Sales",
+            "pedro.sales@kanbanflow.com",
+            "Sales123!",
+            UserRole.Manager
+        );
+
         await context.SaveChangesAsync();
 
         var developmentTeam = await EnsureTeamAsync(
@@ -140,6 +156,20 @@ public static class DatabaseSeeder
             "Content Team",
             "Documentation, SEO and educational content",
             contentStrategist.Id
+        );
+
+        var financeTeam = await EnsureTeamAsync(
+            context,
+            "Finance Team",
+            "Billing, forecasting and reporting",
+            financeLead.Id
+        );
+
+        var salesTeam = await EnsureTeamAsync(
+            context,
+            "Sales Team",
+            "Pipeline, deals and customer outreach",
+            salesLead.Id
         );
 
         await context.SaveChangesAsync();
@@ -212,6 +242,27 @@ public static class DatabaseSeeder
             "Help Center Revamp",
             "Improve article structure and self-service support",
             supportTeam.Id
+        );
+
+        var billingPortalProject = await EnsureProjectAsync(
+            context,
+            "Billing Portal",
+            "Invoices, subscriptions and payment history",
+            financeTeam.Id
+        );
+
+        var salesPipelineProject = await EnsureProjectAsync(
+            context,
+            "Sales Pipeline Revamp",
+            "Lead stages, automation and conversion tracking",
+            salesTeam.Id
+        );
+
+        var partnerPortalProject = await EnsureProjectAsync(
+            context,
+            "Partner Portal",
+            "External partner onboarding and resource center",
+            salesTeam.Id
         );
 
         await context.SaveChangesAsync();
@@ -414,6 +465,72 @@ public static class DatabaseSeeder
             DateTime.UtcNow.AddDays(5)
         );
 
+        var task19 = await EnsureTaskAsync(
+            context,
+            "Reconcile Monthly Billing",
+            "Match invoices, subscriptions and payments",
+            billingPortalProject.Id,
+            TaskPriority.Urgent,
+            TaskStatus.InProgress,
+            financeLead.Id,
+            DateTime.UtcNow.AddDays(2)
+        );
+
+        var task20 = await EnsureTaskAsync(
+            context,
+            "Prepare Forecast Report",
+            "Summarize quarter projections for leadership",
+            billingPortalProject.Id,
+            TaskPriority.Medium,
+            TaskStatus.Todo,
+            financeLead.Id,
+            DateTime.UtcNow.AddDays(6)
+        );
+
+        var task21 = await EnsureTaskAsync(
+            context,
+            "Design Lead Scoring",
+            "Prioritize high-intent leads in the pipeline",
+            salesPipelineProject.Id,
+            TaskPriority.High,
+            TaskStatus.InProgress,
+            salesLead.Id,
+            DateTime.UtcNow.AddDays(3)
+        );
+
+        var task22 = await EnsureTaskAsync(
+            context,
+            "Create Partner Signup Flow",
+            "Invite external partners through a guided flow",
+            partnerPortalProject.Id,
+            TaskPriority.Medium,
+            TaskStatus.Todo,
+            salesLead.Id,
+            DateTime.UtcNow.AddDays(8)
+        );
+
+        var task23 = await EnsureTaskAsync(
+            context,
+            "Add Subscription Alerts",
+            "Notify finance when renewals are close to expiring",
+            billingPortalProject.Id,
+            TaskPriority.Low,
+            TaskStatus.Done,
+            financeLead.Id,
+            DateTime.UtcNow.AddDays(-3)
+        );
+
+        var task24 = await EnsureTaskAsync(
+            context,
+            "Publish Partner Resources",
+            "Upload onboarding guides and program assets",
+            partnerPortalProject.Id,
+            TaskPriority.Medium,
+            TaskStatus.Review,
+            supportAgent.Id,
+            DateTime.UtcNow.AddDays(1)
+        );
+
         await context.SaveChangesAsync();
 
         await EnsureCommentAsync(
@@ -500,6 +617,34 @@ public static class DatabaseSeeder
             "Search snippets will match the refreshed content once we merge the copy."
         );
 
+        await EnsureCommentAsync(
+            context,
+            task19.Id,
+            financeLead.Id,
+            "Billing reconciliation is half done. Waiting for one payment provider export."
+        );
+
+        await EnsureCommentAsync(
+            context,
+            task21.Id,
+            salesLead.Id,
+            "Lead scoring should surface high-value opportunities for the team."
+        );
+
+        await EnsureCommentAsync(
+            context,
+            task22.Id,
+            salesLead.Id,
+            "Partner signup needs fewer steps and a clearer confirmation screen."
+        );
+
+        await EnsureCommentAsync(
+            context,
+            task24.Id,
+            supportAgent.Id,
+            "Resources are ready; we just need the final review from sales."
+        );
+
         await context.SaveChangesAsync();
 
         var storageSeedDir = Path.Combine(
@@ -545,6 +690,18 @@ public static class DatabaseSeeder
             (
                 "content-library.txt",
                 "Brand content library notes with approved headlines and CTA copy."
+            ),
+            (
+                "billing-summary.txt",
+                "Billing portal seed file with invoice and subscription notes."
+            ),
+            (
+                "sales-playbook.txt",
+                "Sales pipeline seed file with conversion and lead tracking notes."
+            ),
+            (
+                "partner-onboarding.txt",
+                "Partner portal seed file with onboarding steps and resource links."
             )
         };
 
@@ -642,6 +799,36 @@ public static class DatabaseSeeder
             "/storage/seed/content-library.txt",
             "text/plain",
             66
+        );
+
+        await EnsureAttachmentAsync(
+            context,
+            task19.Id,
+            financeLead.Id,
+            "billing-summary.txt",
+            "/storage/seed/billing-summary.txt",
+            "text/plain",
+            61
+        );
+
+        await EnsureAttachmentAsync(
+            context,
+            task21.Id,
+            salesLead.Id,
+            "sales-playbook.txt",
+            "/storage/seed/sales-playbook.txt",
+            "text/plain",
+            65
+        );
+
+        await EnsureAttachmentAsync(
+            context,
+            task22.Id,
+            salesLead.Id,
+            "partner-onboarding.txt",
+            "/storage/seed/partner-onboarding.txt",
+            "text/plain",
+            68
         );
 
         await context.SaveChangesAsync();
